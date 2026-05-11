@@ -55,13 +55,13 @@ def get_services():
 @st.cache_data(ttl=10)
 def load_sheet(sheet_name):
     gc, _ = get_services()
-    sh = gc.open(st.secrets["sheet_name"])
+    sh = gc.open_by_key(st.secrets["sheet_id"])
     ws = sh.worksheet(sheet_name)
     return ws.get_all_records()
 
 def get_worksheet(sheet_name):
     gc, _ = get_services()
-    sh = gc.open(st.secrets["sheet_name"])
+    sh = gc.open_by_key(st.secrets["sheet_id"])
     return sh.worksheet(sheet_name)
 
 def upload_to_drive(file_bytes, filename, person_name):
