@@ -100,7 +100,10 @@ try:
     attending = load_sheet("Συμμετέχοντες")
     declined  = load_sheet("Δεν_Έρχονται")
 except Exception as e:
-    st.error(f"Σφάλμα σύνδεσης με Google Sheets: {e}")
+    import traceback
+    st.error(f"Σφάλμα σύνδεσης με Google Sheets: {type(e).__name__}: {e}")
+    st.code(traceback.format_exc())
+    st.write("Secrets keys:", list(st.secrets.keys()))
     st.stop()
 
 total_tickets = sum(r.get("Προσκλήσεις", 0) for r in attending)
