@@ -64,16 +64,20 @@ def get_worksheet(sheet_name):
     sh = gc.open_by_key(st.secrets["sheet_id"])
     return sh.worksheet(sheet_name)
 
-def upload_to_drive(file_bytes, filename, person_name):
-    _, drive = get_services()
-    folder_id = st.secrets.get("drive_folder_id", None)
-    meta = {"name": f"{person_name} - {filename}"}
-    if folder_id:
-        meta["parents"] = [folder_id]
-    media = MediaIoBaseUpload(io.BytesIO(file_bytes), mimetype="application/octet-stream")
-    f = drive.files().create(body=meta, media_body=media, fields="id,webViewLink").execute()
-    drive.permissions().create(fileId=f["id"], body={"role":"reader","type":"anyone"}).execute()
-    return f["webViewLink"]
+def upload_receipt(file_bytes, filename):
+    import base64, requests
+    api_key = st.secrets.get("imgbb_api_key", "")
+    if not api_key:
+        raise ValueError("Δεν βρέθηκε imgbb_api_key στα secrets")
+    b64 = base64.b64encode(file_bytes).decode("utf-8")
+    resp = requests.post(
+        "https://api.imgbb.com/1/upload",
+        data={"key": api_key, "image": b64, "name": filename}
+    )
+    data = resp.json()
+    if not data.get("success"):
+        raise ValueError(f"ImgBB error: {data}")
+    return data["data"]["url"]
 
 # ── Header ────────────────────────────────────────────────────────────────────
 col1, col2 = st.columns([1, 2.5])
