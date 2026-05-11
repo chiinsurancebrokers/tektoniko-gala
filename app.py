@@ -146,7 +146,7 @@ for i, row in enumerate(attending):
                                               type=["jpg","jpeg","png","pdf"])
             if uploaded:
                 with st.spinner("Ανέβασμα στο Drive..."):
-                    url = upload_to_drive(uploaded.read(), uploaded.name, row["Ονοματεπώνυμο"])
+                    url = upload_receipt(uploaded.read(), uploaded.name)
                     ws = get_worksheet("Συμμετέχοντες")
                     cell = ws.find(row["Ονοματεπώνυμο"])
                     ws.update_cell(cell.row, 6, url)
